@@ -22,11 +22,11 @@ st.divider()
 col1, col2 = st.columns(2)
 
 with col1:
-    tanque1 = st.number_input("Tanque 1 (L)", min_value=0.0, step=1.0, value=0.0)
+    tanque1 = st.number_input("Tanque 1 (L)", min_value=0, step=1, value=0)
 with col2:
-    tanque2 = st.number_input("Tanque 2 (L)", min_value=0.0, step=1.0, value=0.0)
+    tanque2 = st.number_input("Tanque 2 (L)", min_value=0, step=1, value=0)
 
-proceso = st.number_input("Proceso (L)", min_value=0.0, step=1.0, value=0.0)
+proceso = st.number_input("Proceso (L)", min_value=0, step=1, value=0)
 
 st.divider()
 

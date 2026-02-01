@@ -1,18 +1,22 @@
 import streamlit as st
+import json
+import random
+import math
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="Calculadora Oxonia", page_icon="🧪", layout="centered")
 
-# Regla: 70 ml por 30 L
+# Regla: 70 mL por 30 L
 ML_POR_30L = 70
 L_BASE = 30
 
 def oxonia_ml(litros_agua: float) -> float:
-    """Regresa ml de Oxonia requeridos para X litros de agua."""
+    """Regresa mL de Oxonia requeridos para X litros de agua."""
     return (litros_agua / L_BASE) * ML_POR_30L
 
-def ml_a_litros(ml: float) -> float:
-    return ml / 1000
+def ceil_1_decimal(valor: float) -> float:
+    """Redondea hacia arriba a 1 decimal."""
+    return math.ceil(valor * 10) / 10
 
 # ---------------- UI ----------------
 st.title("🧪 Calculadora de Oxonia")
@@ -38,7 +42,7 @@ destino_proceso = st.radio(
     horizontal=True
 )
 
-# Aplicar lógica
+# Aplicar lógica (solo a un tanque)
 tanque1_total = tanque1
 tanque2_total = tanque2
 
@@ -47,38 +51,30 @@ if destino_proceso == "Sumar a Tanque 1":
 elif destino_proceso == "Sumar a Tanque 2":
     tanque2_total = tanque2 + proceso
 
-# Cálculos
-ox1_ml = oxonia_ml(tanque1_total)
-ox2_ml = oxonia_ml(tanque2_total)
+# ---------------- CÁLCULOS ----------------
+# Calculamos en mL y redondeamos hacia arriba (evita subdosificación)
+ox1_ml = math.ceil(oxonia_ml(tanque1_total))
+ox2_ml = math.ceil(oxonia_ml(tanque2_total))
 
-ox1_l = ml_a_litros(ox1_ml)
-ox2_l = ml_a_litros(ox2_ml)
+# Convertimos a litros y redondeamos hacia arriba a 1 decimal
+ox1_l = ceil_1_decimal(ox1_ml / 1000)
+ox2_l = ceil_1_decimal(ox2_ml / 1000)
 
+# Totales (opcional pero útil)
+total_ox_ml = ox1_ml + ox2_ml
+total_ox_l = ceil_1_decimal(total_ox_ml / 1000)
+
+# ---------------- RESULTADOS SIMPLES ----------------
 st.subheader("🧪 Oxonia a agregar")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    st.metric(
-        label="Tanque 1",
-        value=f"{ox1_ml} mL"
-    )
-
-with col2:
-    st.metric(
-        label="Tanque 2",
-        value=f"{ox2_ml} mL"
-    )
-
+r1, r2 = st.columns(2)
+with r1:
+    st.metric("Tanque 1", f"{ox1_l} L")
+with r2:
+    st.metric("Tanque 2", f"{ox2_l} L")
 
 st.divider()
+st.metric("Oxonia total a preparar", f"{total_ox_l} L")
 
-total_agua = tanque1_total + tanque2_total
-total_ox_ml = ox1_ml + ox2_ml
-total_ox_l = ml_a_litros(total_ox_ml)
+st.caption("Valores redondeados hacia arriba para asegurar concentración efectiva.")
 
-st.subheader("📌 Totales")
-st.write(f"**Agua total considerada:** {total_agua:.1f} L")
-st.write(f"**Oxonia total:** {total_ox_ml:.1f} mL  ({total_ox_l:.3f} L)")
-
-st.info("Tip: Selecciona solo un destino para el Proceso (Tanque 1 o Tanque 2). Así evitamos sumar doble.")

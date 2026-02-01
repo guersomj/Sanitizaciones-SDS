@@ -54,18 +54,22 @@ ox2_ml = oxonia_ml(tanque2_total)
 ox1_l = ml_a_litros(ox1_ml)
 ox2_l = ml_a_litros(ox2_ml)
 
-st.subheader("✅ Resultados")
+st.subheader("🧪 Oxonia a agregar")
 
-r1, r2 = st.columns(2)
-with r1:
-    st.metric("Tanque 1 - Agua considerada (L)", f"{tanque1_total:.1f}")
-    st.metric("Tanque 1 - Oxonia (mL)", f"{ox1_ml:.1f}")
-    st.metric("Tanque 1 - Oxonia (L)", f"{ox1_l:.3f}")
+col1, col2 = st.columns(2)
 
-with r2:
-    st.metric("Tanque 2 - Agua considerada (L)", f"{tanque2_total:.1f}")
-    st.metric("Tanque 2 - Oxonia (mL)", f"{ox2_ml:.1f}")
-    st.metric("Tanque 2 - Oxonia (L)", f"{ox2_l:.3f}")
+with col1:
+    st.metric(
+        label="Tanque 1",
+        value=f"{ox1_ml} mL"
+    )
+
+with col2:
+    st.metric(
+        label="Tanque 2",
+        value=f"{ox2_ml} mL"
+    )
+
 
 st.divider()
 
